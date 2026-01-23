@@ -36,7 +36,7 @@ jobs:
       - name: Restore Cached Data
         if: github.event_name == 'push'
         id: cache-restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: data/stats.json
           key: stats-data
@@ -57,7 +57,7 @@ jobs:
 
       - name: Save Data Cache
         if: github.event_name != 'push' || steps.cache-restore.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: data/stats.json
           key: stats-data
