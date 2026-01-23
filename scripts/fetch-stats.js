@@ -77,7 +77,7 @@ async function fetchRepositories(org) {
     try {
       const { data } = await octokit.repos.listForOrg({
         org,
-        type: 'public',
+        type: 'all',
         per_page: 100,
         page
       });
@@ -268,7 +268,10 @@ async function main() {
     const repos = await fetchRepositories(org);
     
     for (const repo of repos) {
-      console.log(`  Processing ${repo.name}...`);
+      const displayName = repo.private
+        ? '*'.repeat(Math.floor(Math.random() * 6) + 5) // Random length 5-10
+        : repo.name;
+      console.log(`  Processing ${displayName}...`);
       
       const [commits, pullRequests] = await Promise.all([
         fetchCommits(org, repo.name),
