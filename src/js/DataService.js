@@ -35,8 +35,11 @@ class DataService {
      */
     getLastUpdated() {
         if (!this.data) return 'Never';
+        const date = new Date(this.data.lastUpdated);
         // 'en-CA' locale uses YYYY-MM-DD format
-        return new Date(this.data.lastUpdated).toLocaleDateString('en-CA');
+        const dateStr = date.toLocaleDateString('en-CA');
+        const timeStr = date.toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit', hour12: false });
+        return `${dateStr} ${timeStr}`;
     }
 
     /**
