@@ -13,11 +13,13 @@
     "contributions"
   ],
   "scripts": {
+    "build": "mkdir -p vendor && cp node_modules/chart.js/dist/chart.umd.js vendor/chart.js",
     "fetch-data": "node scripts/fetch-stats.js",
-    "serve": "npx serve ."
+    "serve": "npm run build && npx serve ."
   },
   "dependencies": {
-    "@octokit/rest": "^22.0.1"
+    "@octokit/rest": "^22.0.1",
+    "chart.js": "^4.5.1"
   },
   "engines": {
     "node": ">=24.0.0"
