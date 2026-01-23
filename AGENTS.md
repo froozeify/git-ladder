@@ -162,6 +162,21 @@ All theming is controlled by CSS custom properties in `style.css`:
 GH_YEARS=2 GH_ORGS="org1,org2" GH_TOKEN=your_token npm run fetch-data
 ```
 
+## Development Guidelines
+
+### Commit Messages
+
+Commits should follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to the build process or auxiliary tools
+
 ## Security Considerations
 
 - Never commit GitHub tokens
@@ -180,3 +195,14 @@ GH_YEARS=2 GH_ORGS="org1,org2" GH_TOKEN=your_token npm run fetch-data
 - Modern browsers (Chrome, Firefox, Safari, Edge)
 - Requires ES6+ support (no transpilation)
 - `backdrop-filter` may not work in older browsers (graceful degradation)
+
+
+## License
+
+GNU AGPLv3 License – See [LICENSE](LICENSE) file for details.
+
+---
+
+**Created by:** Benoît VIGNAL
+**Version:** 1.0.0
+**Last Updated:** 2026-01-23
