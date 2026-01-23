@@ -13,7 +13,7 @@ class App {
         this.filters = {
             year: 'all',
             month: 'all',
-            metric: 'commits'
+            metric: 'pullRequests'
         };
         
         // DOM elements
