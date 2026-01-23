@@ -205,4 +205,4 @@ GNU AGPLv3 License – See [LICENSE](LICENSE) file for details.
 
 **Created by:** Benoît VIGNAL
 **Version:** 1.0.0
-**Last Updated:** 2026-01-21
+**Last Updated:** 2026-01-23
