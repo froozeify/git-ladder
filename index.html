@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="GitHub Ladder - Track commits and pull requests leaderboard for GitHub organizations">
-    <title>Git Ladder - Contribution Leaderboard</title>
+    <title>Git Ladder - Contribution Hall of Fame</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +36,7 @@
                     <!-- Organization badges will be inserted dynamically -->
                 </div>
             </div>
-            <p class="subtitle">Contribution Leaderboard - Track commits & pull requests</p>
+            <p class="subtitle">Contribution Hall of Fame - Track commits & pull requests</p>
             <p class="last-updated" id="lastUpdated">Last updated: Loading...</p>
         </header>
 
@@ -77,18 +77,43 @@
             </div>
         </section>
 
+        <!-- KPI Cards -->
+        <section class="kpi-section" id="kpiSection">
+            <div class="kpi-card card">
+                <div class="kpi-icon">📝</div>
+                <div class="kpi-content">
+                    <h3>Commits</h3>
+                    <p class="kpi-value" id="kpiCommits">0</p>
+                </div>
+            </div>
+            <div class="kpi-card card">
+                <div class="kpi-icon">🔄</div>
+                <div class="kpi-content">
+                    <h3>Pull Requests</h3>
+                    <p class="kpi-value" id="kpiPRs">0</p>
+                </div>
+            </div>
+            <div class="kpi-card card">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-content">
+                    <h3>Contributors</h3>
+                    <p class="kpi-value" id="kpiContributors">0</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Leaderboard Chart -->
-            <section class="chart-section">
-                <h2 class="section-title">🏅 Leaderboard</h2>
+            <section class="chart-section card">
+                <h2 class="section-title">🏅 Hall of Fame</h2>
                 <div class="chart-container">
                     <canvas id="leaderboardChart"></canvas>
                 </div>
             </section>
 
             <!-- Trend Chart -->
-            <section class="chart-section" id="trendChartSection">
+            <section class="chart-section card" id="trendChartSection">
                 <h2 class="section-title">📈 Monthly Trends</h2>
                 <div class="chart-container">
                     <canvas id="trendChart"></canvas>
@@ -96,7 +121,7 @@
             </section>
 
             <!-- User Cards -->
-            <section class="users-section">
+            <section class="users-section card">
                 <h2 class="section-title">👥 Contributors</h2>
                 <div class="users-grid" id="usersGrid">
                     <!-- User cards will be inserted here -->

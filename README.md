@@ -1,6 +1,6 @@
 # Git Ladder
 
-🏆 **A GitHub Pages website displaying commits and pull requests leaderboard.**
+🏆 **A GitHub Pages website displaying commits and pull requests Hall of Fame.**
 
 ## Features
 

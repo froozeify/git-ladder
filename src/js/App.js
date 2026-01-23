@@ -27,7 +27,10 @@ class App {
             trendChartSection: document.getElementById('trendChartSection'),
             usersGrid: document.getElementById('usersGrid'),
             orgBadges: document.getElementById('orgBadges'),
-            footerLinks: document.getElementById('footerLinks')
+            footerLinks: document.getElementById('footerLinks'),
+            kpiCommits: document.getElementById('kpiCommits'),
+            kpiPRs: document.getElementById('kpiPRs'),
+            kpiContributors: document.getElementById('kpiContributors')
         };
     }
 
@@ -209,6 +212,9 @@ class App {
         
         // Update user cards
         this.renderUserCards(stats);
+        
+        // Update KPIs
+        this.updateKPIs();
     }
 
     /**
@@ -254,6 +260,52 @@ class App {
                 </div>
             `;
         }).join('');
+    }
+
+    /**
+     * Updates KPI cards with animated values
+     */
+    updateKPIs() {
+        const stats = this.dataService.getAggregatedStats(this.filters);
+        
+        this.animateValue(this.elements.kpiCommits, parseInt(this.elements.kpiCommits.dataset.value || 0), stats.commits, 1000);
+        this.elements.kpiCommits.dataset.value = stats.commits;
+        
+        this.animateValue(this.elements.kpiPRs, parseInt(this.elements.kpiPRs.dataset.value || 0), stats.pullRequests, 1000);
+        this.elements.kpiPRs.dataset.value = stats.pullRequests;
+        
+        this.animateValue(this.elements.kpiContributors, parseInt(this.elements.kpiContributors.dataset.value || 0), stats.contributors, 1000);
+        this.elements.kpiContributors.dataset.value = stats.contributors;
+    }
+
+    /**
+     * Animates a number from start to end value
+     * @param {HTMLElement} obj - Element to update
+     * @param {number} start - Start value
+     * @param {number} end - End value
+     * @param {number} duration - Animation duration in ms
+     */
+    animateValue(obj, start, end, duration) {
+        if (!obj) return;
+        
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            
+            // Earings function for smoother animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            
+            const value = Math.floor(progress * (end - start) + start);
+            obj.innerHTML = value.toLocaleString();
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                obj.innerHTML = end.toLocaleString();
+            }
+        };
+        window.requestAnimationFrame(step);
     }
 }
 

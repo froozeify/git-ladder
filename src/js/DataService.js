@@ -66,6 +66,22 @@ class DataService {
     }
 
     /**
+     * Gets aggregated statistics for the selected period
+     * @param {Object} filters - Filter options (year, month)
+     * @returns {Object} Aggregated stats (commits, pullRequests, contributors)
+     */
+    getAggregatedStats(filters) {
+        const stats = this.getUserStats(filters);
+        
+        return stats.reduce((acc, user) => {
+            acc.commits += user.commits;
+            acc.pullRequests += user.pullRequests;
+            acc.contributors++;
+            return acc;
+        }, { commits: 0, pullRequests: 0, contributors: 0 });
+    }
+
+    /**
      * Gets aggregated statistics for all users based on filters
      * @param {Object} options - Filter options
      * @param {string} options.year - Year to filter by ('all' for all years)

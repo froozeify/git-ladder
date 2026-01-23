@@ -416,27 +416,68 @@ body {
 }
 
 /* Chart Section */
-.chart-section {
+/* KPI Section */
+.kpi-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Shared Card Style */
+.card {
     background: var(--color-bg-glass);
     backdrop-filter: blur(10px);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
 }
+
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    transition: transform var(--transition-fast);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.kpi-icon {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.kpi-content h3 {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1;
+}
+
+/* Chart Section & Users Section visuals handled by .card class */
+/* Layout handled by grid/flex containers */
 
 .chart-container {
     position: relative;
     height: 400px;
     width: 100%;
-}
-
-/* Users Section */
-.users-section {
-    background: var(--color-bg-glass);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
 }
 
 .users-grid {
@@ -621,6 +662,10 @@ body {
 
     .chart-container {
         height: 300px;
+    }
+
+    .kpi-section {
+        grid-template-columns: 1fr;
     }
 
     .users-grid {
