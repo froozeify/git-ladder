@@ -1,0 +1,28 @@
+{
+  "name": "git-ladder",
+  "version": "1.0.0",
+  "description": "A GitHub Pages website displaying commits and pull requests leaderboard for GitHub organizations",
+  "private": true,
+  "type": "module",
+  "author": "Benoit VIGNAL",
+  "license": "GNU AGPLv3",
+  "keywords": [
+    "github",
+    "leaderboard",
+    "statistics",
+    "contributions"
+  ],
+  "scripts": {
+    "fetch-data": "node scripts/fetch-stats.js",
+    "serve": "npx serve ."
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3"
+  }
+}

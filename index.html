@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GitHub Ladder - Track commits and pull requests leaderboard for GitHub organizations">
+    <title>Git Ladder - Contribution Leaderboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+    </button>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🏆</span>
+                    <h1>Git Ladder</h1>
+                </div>
+                <div class="header-info" id="orgBadges">
+                    <!-- Organization badges will be inserted dynamically -->
+                </div>
+            </div>
+            <p class="subtitle">Contribution Leaderboard - Track commits & pull requests</p>
+            <p class="last-updated" id="lastUpdated">Last updated: Loading...</p>
+        </header>
+
+        <!-- Controls -->
+        <section class="controls">
+            <div class="control-group">
+                <label for="yearSelect">Year</label>
+                <select id="yearSelect" class="select">
+                    <option value="all">All Years</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="monthSelect">Month</label>
+                <select id="monthSelect" class="select">
+                    <option value="all">All Months</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Metric</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" data-metric="commits">Commits</button>
+                    <button class="toggle-btn" data-metric="pullRequests">Pull Requests</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Leaderboard Chart -->
+            <section class="chart-section">
+                <h2 class="section-title">🏅 Leaderboard</h2>
+                <div class="chart-container">
+                    <canvas id="leaderboardChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Trend Chart -->
+            <section class="chart-section" id="trendChartSection">
+                <h2 class="section-title">📈 Monthly Trends</h2>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </section>
+
+            <!-- User Cards -->
+            <section class="users-section">
+                <h2 class="section-title">👥 Contributors</h2>
+                <div class="users-grid" id="usersGrid">
+                    <!-- User cards will be inserted here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Data fetched from GitHub API • Updated daily via GitHub Actions</p>
+            <p class="footer-links" id="footerLinks">
+                <!-- Organization links will be inserted dynamically -->
+            </p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="src/js/ThemeManager.js"></script>
+    <script src="src/js/DataService.js"></script>
+    <script src="src/js/ChartManager.js"></script>
+    <script src="src/js/App.js"></script>
+</body>
+</html>
