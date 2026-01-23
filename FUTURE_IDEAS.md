@@ -56,11 +56,11 @@ Gamification elements:
 - Date format localization
 - Number format localization
 
-### 📱 PWA Support
+### 📱 PWA Support (Implemented)
 
-- Offline viewing capability
-- Install as app
-- Push notifications for achievements
+- [x] Offline viewing capability
+- [x] Install as app
+- [ ] Push notifications for achievements (Future)
 
 ### 📅 Historical Comparisons
 
