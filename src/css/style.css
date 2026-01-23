@@ -14,8 +14,8 @@
     --color-text-secondary: #8b949e;
     --color-text-muted: #6e7681;
 
-    --color-accent-primary: #58a6ff;
-    --color-accent-secondary: #1f6feb;
+    --color-accent-primary: #000091;
+    --color-accent-secondary: #000080;
     --color-accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
     --color-success: #3fb950;
@@ -105,46 +105,6 @@
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
     --shadow-glow: 0 0 20px rgba(9, 105, 218, 0.2);
-}
-
-/* System preference detection */
-@media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-        --color-bg-primary: #ffffff;
-        --color-bg-secondary: #f6f8fa;
-        --color-bg-tertiary: #eaeef2;
-        --color-bg-glass: rgba(255, 255, 255, 0.9);
-
-        --color-text-primary: #1f2328;
-        --color-text-secondary: #656d76;
-        --color-text-muted: #8c959f;
-
-        --color-accent-primary: #0969da;
-        --color-accent-secondary: #0550ae;
-
-        --color-success: #1a7f37;
-        --color-warning: #9a6700;
-        --color-error: #cf222e;
-
-        --color-border: #d0d7de;
-        --color-border-light: rgba(31, 35, 40, 0.1);
-
-        --chart-color-1: #0969da;
-        --chart-color-2: #1a7f37;
-        --chart-color-3: #9a6700;
-        --chart-color-4: #cf222e;
-        --chart-color-5: #8250df;
-        --chart-color-6: #bf3989;
-        --chart-color-7: #0550ae;
-        --chart-color-8: #116329;
-        --chart-color-9: #7d4e00;
-        --chart-color-10: #a40e26;
-
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-        --shadow-glow: 0 0 20px rgba(9, 105, 218, 0.2);
-    }
 }
 
 /* Theme Toggle Button */
