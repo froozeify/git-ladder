@@ -21,7 +21,7 @@ Git Ladder is a static website that displays contribution leaderboards (commits 
 ```
 git-ladder/
 ├── .github/workflows/
-│   └── deploy.yml          # Fetch data and deploy to Pages (daily)
+│   └── fetch-and-deploy.yml # Fetch data and deploy to Pages (daily)
 ├── data/
 │   └── stats.json          # Generated statistics (NOT committed, generated at deploy time)
 ├── scripts/

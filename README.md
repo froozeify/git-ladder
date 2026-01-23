@@ -62,7 +62,7 @@ The script automatically loads configuration from `.env`.
 ```
 git-ladder/
 ├── .github/workflows/
-│   └── deploy.yml          # Fetch data and deploy to Pages
+│   └── fetch-and-deploy.yml # Deployment workflow (Push & Schedule)
 ├── data/
 │   └── stats.json          # Generated statistics (not committed)
 ├── scripts/

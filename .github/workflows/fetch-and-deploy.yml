@@ -4,6 +4,9 @@ on:
   schedule:
     # Runs daily at midnight UTC
     - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
   workflow_dispatch:
     # Allows manual trigger from GitHub Actions UI
 
@@ -35,7 +38,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Strategy:
+      # 1. On Push: Try to restore latest data cache. If hit, use it (skip fetch).
+      # 2. On Schedule/Dispatch: Always fetch fresh data.
+      # 3. If cache miss on Push: Fetch data.
+
+      - name: Restore Cached Data
+        if: github.event_name == 'push'
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: data/stats.json
+          key: stats-data-placeholder-${{ github.run_id }} # This won't match, forcing fallback to restore-keys
+          restore-keys: |
+            stats-data-
+
       - name: Fetch GitHub statistics
+        # Fetch if explicitly requested (schedule/dispatch) OR if cache missing/not restored
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || steps.cache-restore.outputs.cache-hit != 'true'
         run: npm run fetch-data
         env:
           # Uses default GITHUB_TOKEN for public repos
@@ -45,6 +65,16 @@ jobs:
           GH_ORGS: ${{ vars.GH_ORGS }}
           # Number of years to fetch (default: 3), configured via repository variable
           GH_YEARS: ${{ vars.GH_YEARS }}
+
+      - name: Save Data Cache
+        # Only save cache when we fetched fresh data intentionally (Schedule/Dispatch)
+        # We don't save on Push to avoid polluting cache with potentially stale data (if we restored it)
+        # or duplicating it. We want the Schedule to be the "source of truth".
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: actions/cache/save@v4
+        with:
+          path: data/stats.json
+          key: stats-data-${{ github.run_id }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
