@@ -1,0 +1,46 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: '🚀 Features'
+      labels:
+        - 'enhancement'
+    - title: '🐛 Bug Fixes'
+      labels:
+        - 'fix'
+        - 'bug'
+    - title: '📝 Documentation'
+      labels:
+        - 'documentation'
+    - title: '🎨 Style'
+      labels:
+        - 'style'
+    - title: '♻️ Refactoring'
+      labels:
+        - 'refactor'
+    - title: '⚡️ Performance'
+      labels:
+        - 'performance'
+    - title: '✅ Tests'
+      labels:
+        - 'test'
+    - title: '👷 CI'
+      labels:
+        - 'ci'
+    - title: '🔧 Maintenance'
+      labels:
+        - 'build'
+        - 'chore'
+    - title: '📦 NPM'
+      labels:
+        - 'npm'
+    - title: '🐙 GitHub Actions'
+      labels:
+        - 'github-actions'
+    - title: '📦 Dependencies'
+      labels:
+        - 'dependencies'
+    - title: 'Other Changes'
+      labels:
+        - '*'
