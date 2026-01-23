@@ -34,17 +34,16 @@ jobs:
         run: npm ci
 
       - name: Restore Cached Data
-        if: github.event_name == 'push'
         id: cache-restore
         uses: actions/cache/restore@v5
         with:
           path: data/stats.json
-          key: stats-data
+          key: stats-data-${{ github.run_id }}
           restore-keys: |
-            stats-data
+            stats-data-
 
       - name: Fetch GitHub statistics
-        if: github.event_name != 'push' || steps.cache-restore.outputs.cache-hit != 'true'
+        if: github.event_name != 'push' || hashFiles('data/stats.json') == ''
         run: npm run fetch-data
         env:
           # Uses default GITHUB_TOKEN for public repos
@@ -56,11 +55,11 @@ jobs:
           GH_YEARS: ${{ vars.GH_YEARS }}
 
       - name: Save Data Cache
-        if: github.event_name != 'push' || steps.cache-restore.outputs.cache-hit != 'true'
+        if: github.event_name != 'push' || hashFiles('data/stats.json') == ''
         uses: actions/cache/save@v5
         with:
           path: data/stats.json
-          key: stats-data
+          key: stats-data-${{ github.run_id }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
