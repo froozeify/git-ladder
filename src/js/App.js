@@ -101,16 +101,27 @@ class App {
         // Update header badges
         if (this.elements.orgBadges) {
             this.elements.orgBadges.innerHTML = organizations
-                .map(org => `<span class="org-badge">${org}</span>`)
+                .map(org => this.createOrgLink(org, 'org-badge'))
                 .join('');
         }
         
         // Update footer links
         if (this.elements.footerLinks) {
             this.elements.footerLinks.innerHTML = organizations
-                .map(org => `<a href="https://github.com/${org}" target="_blank">${org}</a>`)
+                .map(org => this.createOrgLink(org))
                 .join('<span>•</span>');
         }
+    }
+
+    /**
+     * Creates an HTML link for an organization
+     * @param {string} org - Organization name
+     * @param {string} className - Optional class name
+     * @returns {string} HTML string for the link
+     */
+    createOrgLink(org, className = '') {
+        const classAttr = className ? ` class="${className}"` : '';
+        return `<a href="https://github.com/${org}" target="_blank"${classAttr}>${org}</a>`;
     }
 
     /**

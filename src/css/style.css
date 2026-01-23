@@ -9,22 +9,22 @@
     --color-bg-secondary: #161b22;
     --color-bg-tertiary: #21262d;
     --color-bg-glass: rgba(22, 27, 34, 0.8);
-    
+
     --color-text-primary: #f0f6fc;
     --color-text-secondary: #8b949e;
     --color-text-muted: #6e7681;
-    
+
     --color-accent-primary: #58a6ff;
     --color-accent-secondary: #1f6feb;
     --color-accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    
+
     --color-success: #3fb950;
     --color-warning: #d29922;
     --color-error: #f85149;
-    
+
     --color-border: #30363d;
     --color-border-light: rgba(240, 246, 252, 0.1);
-    
+
     /* Chart Colors */
     --chart-color-1: #58a6ff;
     --chart-color-2: #3fb950;
@@ -36,7 +36,7 @@
     --chart-color-8: #7ee787;
     --chart-color-9: #e3b341;
     --chart-color-10: #ff7b72;
-    
+
     /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
@@ -44,24 +44,24 @@
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
-    
+
     /* Border Radius */
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --radius-xl: 24px;
-    
+
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.3);
-    
+
     /* Transitions */
     --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
     --transition-slow: 400ms ease;
-    
+
     /* Typography */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
@@ -72,22 +72,22 @@
     --color-bg-secondary: #f6f8fa;
     --color-bg-tertiary: #eaeef2;
     --color-bg-glass: rgba(255, 255, 255, 0.9);
-    
+
     --color-text-primary: #1f2328;
     --color-text-secondary: #656d76;
     --color-text-muted: #8c959f;
-    
+
     --color-accent-primary: #0969da;
-    --color-accent-secondary: #0550ae;
+    --color-accent-secondary: #166fdd;
     --color-accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    
+
     --color-success: #1a7f37;
     --color-warning: #9a6700;
     --color-error: #cf222e;
-    
+
     --color-border: #d0d7de;
     --color-border-light: rgba(31, 35, 40, 0.1);
-    
+
     /* Chart Colors - slightly darker for light theme */
     --chart-color-1: #0969da;
     --chart-color-2: #1a7f37;
@@ -99,7 +99,7 @@
     --chart-color-8: #116329;
     --chart-color-9: #7d4e00;
     --chart-color-10: #a40e26;
-    
+
     /* Shadows - lighter for light theme */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -114,21 +114,21 @@
         --color-bg-secondary: #f6f8fa;
         --color-bg-tertiary: #eaeef2;
         --color-bg-glass: rgba(255, 255, 255, 0.9);
-        
+
         --color-text-primary: #1f2328;
         --color-text-secondary: #656d76;
         --color-text-muted: #8c959f;
-        
+
         --color-accent-primary: #0969da;
         --color-accent-secondary: #0550ae;
-        
+
         --color-success: #1a7f37;
         --color-warning: #9a6700;
         --color-error: #cf222e;
-        
+
         --color-border: #d0d7de;
         --color-border-light: rgba(31, 35, 40, 0.1);
-        
+
         --chart-color-1: #0969da;
         --chart-color-2: #1a7f37;
         --chart-color-3: #9a6700;
@@ -139,7 +139,7 @@
         --chart-color-8: #116329;
         --chart-color-9: #7d4e00;
         --chart-color-10: #a40e26;
-        
+
         --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
         --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
         --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -220,7 +220,7 @@ body {
     color: var(--color-text-primary);
     line-height: 1.6;
     min-height: 100vh;
-    background-image: 
+    background-image:
         radial-gradient(ellipse at top, rgba(88, 166, 255, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at bottom right, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
 }
@@ -291,6 +291,7 @@ body {
     border-radius: var(--radius-xl);
     font-size: 0.875rem;
     color: var(--color-text-secondary);
+    text-decoration: none;
     transition: all var(--transition-fast);
 }
 
@@ -580,40 +581,40 @@ body {
     .app {
         padding: var(--spacing-md);
     }
-    
+
     .header {
         padding: var(--spacing-lg);
     }
-    
+
     .header h1 {
         font-size: 1.75rem;
     }
-    
+
     .controls {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .control-group {
         width: 100%;
     }
-    
+
     .select {
         width: 100%;
     }
-    
+
     .toggle-group {
         width: 100%;
     }
-    
+
     .toggle-btn {
         flex: 1;
     }
-    
+
     .chart-container {
         height: 300px;
     }
-    
+
     .users-grid {
         grid-template-columns: 1fr;
     }
