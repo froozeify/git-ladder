@@ -2,7 +2,6 @@ name: Fetch Data and Deploy to Pages
 
 on:
   schedule:
-    # Runs daily at midnight
     - cron: '0 0 * * *'
   push:
     branches:
