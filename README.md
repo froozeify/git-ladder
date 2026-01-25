@@ -144,7 +144,7 @@ npm run fetch-data
 
 The deployment uses GitHub's artifact-based Pages deployment:
 
-1. **Daily Trigger**: GitHub Actions runs the workflow at midnight UTC
+1. **Daily Trigger**: GitHub Actions runs the workflow at 6:00 UTC daily
 2. **Data Fetch**: The script fetches commits/PRs from configured organizations
 3. **Build Artifact**: The entire site (including generated data) is packaged
 4. **Deploy**: The artifact is deployed directly to GitHub Pages
@@ -153,6 +153,18 @@ This approach means:
 - ✅ No data files committed to the repository
 - ✅ Fresh data on every deployment
 - ✅ Clean git history
+
+### Important: Scheduled Workflow Reliability
+
+GitHub may disable scheduled workflows after **60 days of repository inactivity**. If the daily data refresh stops working:
+
+1. **Check if the workflow is disabled**: Go to **Actions** → Click the workflow → Look for a yellow banner indicating it's disabled
+2. **Re-enable if needed**: Click "Enable workflow" button
+3. **Ensure repository activity**: Any push, issue, or PR activity resets the 60-day counter
+
+You can also manually trigger the workflow anytime via **Actions** → **Fetch Data and Deploy to Pages** → **Run workflow**.
+
+For more details, see [GitHub's documentation on disabling workflows](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/disabling-and-enabling-a-workflow).
 
 ## Contributing
 
