@@ -1,11 +1,8 @@
-name: Fetch Data and Deploy to Pages
+name: Fetch Data and Deploy to Gh Pages
 
 on:
   schedule:
-    # Run daily at 6:00 UTC (off-peak hours for better reliability)
-    # Note: GitHub may disable scheduled workflows after 60 days of repository inactivity
-    # See: https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/disabling-and-enabling-a-workflow
-    - cron: '0 6 * * *'
+    - cron: '0 1 * * *'
   push:
     branches:
       - main
