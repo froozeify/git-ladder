@@ -83,11 +83,19 @@
             </div>
 
             <div class="control-group">
-                <label for="excludeUsersSelect">Exclude Users</label>
-                <select id="excludeUsersSelect" class="select" multiple size="4">
+                <label for="excludeUsersSelect" class="collapsible-label">
+                    Exclude Users
+                    <span class="toggle-icon" id="excludeToggle">▼</span>
+                </label>
+                <select id="excludeUsersSelect" class="select collapsed" multiple size="3">
                     <!-- Options will be populated dynamically -->
                 </select>
             </div>
+        </section>
+
+        <!-- Excluded Users Chips -->
+        <section class="excluded-users-chips" id="excludedUsersChips">
+            <!-- Chips will be inserted here dynamically -->
         </section>
 
         <!-- KPI Cards -->

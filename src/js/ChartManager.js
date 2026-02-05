@@ -50,8 +50,9 @@ class ChartManager {
      * @param {HTMLCanvasElement} canvas - The canvas element
      * @param {Array} data - User statistics data
      * @param {string} metric - Current metric label
+     * @param {Function} onBarClick - Callback when a bar is clicked
      */
-    createLeaderboardChart(canvas, data, metric = 'Commits') {
+    createLeaderboardChart(canvas, data, metric = 'Commits', onBarClick = null) {
         const ctx = canvas.getContext('2d');
         
         // Destroy existing chart if any
@@ -81,6 +82,13 @@ class ChartManager {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                onClick: (event, elements) => {
+                    if (elements.length > 0 && onBarClick) {
+                        const index = elements[0].index;
+                        const username = topUsers[index].username;
+                        onBarClick(username);
+                    }
+                },
                 plugins: {
                     legend: {
                         display: false
@@ -96,7 +104,8 @@ class ChartManager {
                         displayColors: false,
                         callbacks: {
                             title: (items) => items[0].label,
-                            label: (item) => `${metric}: ${item.raw.toLocaleString()}`
+                            label: (item) => `${metric}: ${item.raw.toLocaleString()}`,
+                            afterLabel: () => 'Click to exclude/include'
                         }
                     }
                 },
@@ -128,6 +137,9 @@ class ChartManager {
                 }
             }
         });
+        
+        // Make canvas cursor pointer to indicate clickability
+        canvas.style.cursor = 'pointer';
     }
 
     /**

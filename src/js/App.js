@@ -23,6 +23,8 @@ class App {
             yearSelect: document.getElementById('yearSelect'),
             monthSelect: document.getElementById('monthSelect'),
             excludeUsersSelect: document.getElementById('excludeUsersSelect'),
+            excludeToggle: document.getElementById('excludeToggle'),
+            excludedUsersChips: document.getElementById('excludedUsersChips'),
             toggleBtns: document.querySelectorAll('.toggle-btn'),
             leaderboardChart: document.getElementById('leaderboardChart'),
             trendChart: document.getElementById('trendChart'),
@@ -197,8 +199,21 @@ class App {
         // Exclude users select
         this.elements.excludeUsersSelect.addEventListener('change', (e) => {
             this.filters.excludedUsers = Array.from(e.target.selectedOptions).map(opt => opt.value);
+            this.renderExcludedChips();
             this.render();
         });
+        
+        // Toggle exclude users select visibility
+        if (this.elements.excludeToggle) {
+            this.elements.excludeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const select = this.elements.excludeUsersSelect;
+                const icon = this.elements.excludeToggle;
+                
+                select.classList.toggle('collapsed');
+                icon.classList.toggle('expanded');
+            });
+        }
         
         // Metric toggle buttons
         this.elements.toggleBtns.forEach(btn => {
@@ -222,7 +237,8 @@ class App {
         this.chartManager.createLeaderboardChart(
             this.elements.leaderboardChart,
             stats,
-            metricLabel
+            metricLabel,
+            (username) => this.handleChartClick(username)
         );
         
         const trendData = this.dataService.getTrendData({
@@ -243,8 +259,76 @@ class App {
         // Update user cards
         this.renderUserCards(stats);
         
+        // Update excluded user chips
+        this.renderExcludedChips();
+        
         // Update KPIs
         this.updateKPIs();
+    }
+
+    /**
+     * Handles click on chart bar to exclude/include user
+     * @param {string} username - Username that was clicked
+     */
+    handleChartClick(username) {
+        const index = this.filters.excludedUsers.indexOf(username);
+        
+        if (index === -1) {
+            // Add to excluded users
+            this.filters.excludedUsers.push(username);
+        } else {
+            // Remove from excluded users
+            this.filters.excludedUsers.splice(index, 1);
+        }
+        
+        // Update the multiselect to reflect the change
+        this.updateExcludeUsersSelect();
+        
+        // Re-render
+        this.render();
+    }
+
+    /**
+     * Updates the exclude users select element
+     */
+    updateExcludeUsersSelect() {
+        Array.from(this.elements.excludeUsersSelect.options).forEach(option => {
+            option.selected = this.filters.excludedUsers.includes(option.value);
+        });
+    }
+
+    /**
+     * Renders excluded user chips
+     */
+    renderExcludedChips() {
+        if (!this.elements.excludedUsersChips) return;
+        
+        if (this.filters.excludedUsers.length === 0) {
+            this.elements.excludedUsersChips.innerHTML = '';
+            return;
+        }
+        
+        this.elements.excludedUsersChips.innerHTML = this.filters.excludedUsers.map(username => `
+            <div class="user-chip">
+                <span>${username}</span>
+                <button class="user-chip-remove" onclick="app.removeExcludedUser('${username}')" aria-label="Remove ${username}">
+                    ×
+                </button>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * Removes a user from the excluded list
+     * @param {string} username - Username to remove from exclusions
+     */
+    removeExcludedUser(username) {
+        const index = this.filters.excludedUsers.indexOf(username);
+        if (index !== -1) {
+            this.filters.excludedUsers.splice(index, 1);
+            this.updateExcludeUsersSelect();
+            this.render();
+        }
     }
 
     /**
@@ -341,6 +425,6 @@ class App {
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new App();
-    app.init();
+    window.app = new App();
+    window.app.init();
 });
