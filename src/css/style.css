@@ -329,6 +329,24 @@ body {
     outline: none;
 }
 
+.select[multiple] {
+    background-image: none;
+    padding: var(--spacing-sm);
+    min-width: 180px;
+    overflow-y: auto;
+}
+
+.select[multiple] option {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.select[multiple] option:checked {
+    background: var(--color-accent-primary);
+    color: var(--color-text-primary);
+}
+
 .toggle-group {
     display: flex;
     background: var(--color-bg-tertiary);

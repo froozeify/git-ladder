@@ -69,6 +69,15 @@ class DataService {
     }
 
     /**
+     * Gets all user names from the data
+     * @returns {Array<string>} List of usernames
+     */
+    getAllUsers() {
+        if (!this.data) return [];
+        return Object.keys(this.data.users).sort();
+    }
+
+    /**
      * Gets aggregated statistics for the selected period
      * @param {Object} filters - Filter options (year, month)
      * @returns {Object} Aggregated stats (commits, pullRequests, contributors)
@@ -90,14 +99,20 @@ class DataService {
      * @param {string} options.year - Year to filter by ('all' for all years)
      * @param {string} options.month - Month to filter by ('all' for all months)
      * @param {string} options.metric - Metric type ('commits' or 'pullRequests')
+     * @param {Array<string>} options.excludedUsers - List of usernames to exclude (default: [])
      * @returns {Array<Object>} Sorted array of user statistics
      */
-    getUserStats({ year = 'all', month = 'all', metric = 'commits' } = {}) {
+    getUserStats({ year = 'all', month = 'all', metric = 'commits', excludedUsers = [] } = {}) {
         if (!this.data) return [];
 
         const results = [];
 
         for (const [username, userData] of Object.entries(this.data.users)) {
+            // Skip excluded users
+            if (excludedUsers.includes(username)) {
+                continue;
+            }
+
             const metricData = userData[metric] || {};
             let total = 0;
 
@@ -173,13 +188,14 @@ class DataService {
      * @param {string} options.year - Year to get trends for
      * @param {string} options.metric - Metric type
      * @param {number} options.topN - Number of top users to include
+     * @param {Array<string>} options.excludedUsers - List of usernames to exclude (default: [])
      * @returns {Object} Trend data with labels and datasets
      */
-    getTrendData({ year, metric = 'commits', topN = 10 } = {}) {
+    getTrendData({ year, metric = 'commits', topN = 10, excludedUsers = [] } = {}) {
         if (!this.data) return null;
 
         // Get top users for the selected period
-        const topUsers = this.getUserStats({ year, month: 'all', metric }).slice(0, topN);
+        const topUsers = this.getUserStats({ year, month: 'all', metric, excludedUsers }).slice(0, topN);
 
         // Handle "All Years" - Show yearly trend
         if (year === 'all') {
