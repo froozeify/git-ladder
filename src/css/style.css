@@ -329,6 +329,30 @@ body {
     outline: none;
 }
 
+/* Multi-select specific styles */
+.select[multiple] {
+    background-image: none; /* Remove dropdown arrow for multi-select */
+    padding: var(--spacing-sm);
+    min-height: 80px;
+    cursor: default;
+}
+
+.select[multiple] option {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.select[multiple] option:hover {
+    background: var(--color-bg-secondary);
+}
+
+.select[multiple] option:checked {
+    background: var(--color-accent-primary);
+    color: var(--color-text-primary);
+}
+
 .toggle-group {
     display: flex;
     background: var(--color-bg-tertiary);

@@ -13,7 +13,8 @@ class App {
         this.filters = {
             year: 'all',
             month: 'all',
-            metric: 'pullRequests'
+            metric: 'pullRequests',
+            excludedUsers: ['dependabot[bot]']  // Default exclusions
         };
         
         // DOM elements
@@ -21,6 +22,7 @@ class App {
             lastUpdated: document.getElementById('lastUpdated'),
             yearSelect: document.getElementById('yearSelect'),
             monthSelect: document.getElementById('monthSelect'),
+            excludeUsersSelect: document.getElementById('excludeUsersSelect'),
             toggleBtns: document.querySelectorAll('.toggle-btn'),
             leaderboardChart: document.getElementById('leaderboardChart'),
             trendChart: document.getElementById('trendChart'),
@@ -49,6 +51,7 @@ class App {
             this.updateLastUpdated();
             this.updateOrganizations();
             this.populateYearSelect();
+            this.populateExcludeUsersSelect();
             this.bindEventHandlers();
             
             // Listen for theme changes to update charts
@@ -149,28 +152,57 @@ class App {
     }
 
     /**
+     * Populates the exclude users multi-select dropdown
+     */
+    populateExcludeUsersSelect() {
+        const usernames = this.dataService.getAllUsernames();
+
+        this.elements.excludeUsersSelect.innerHTML = '';
+
+        usernames.forEach(username => {
+            const option = document.createElement('option');
+            option.value = username;
+            option.textContent = username;
+
+            // Pre-select default exclusions
+            if (this.filters.excludedUsers.includes(username)) {
+                option.selected = true;
+            }
+
+            this.elements.excludeUsersSelect.appendChild(option);
+        });
+    }
+
+    /**
      * Binds event handlers to UI elements
      */
     bindEventHandlers() {
         // Year select
         this.elements.yearSelect.addEventListener('change', (e) => {
             this.filters.year = e.target.value;
-            
+
             // If "All time" (all) is selected for year, force month to "All months"
             if (this.filters.year === 'all') {
                 this.filters.month = 'all';
                 this.elements.monthSelect.value = 'all';
             }
-            
+
             this.render();
         });
-        
+
         // Month select
         this.elements.monthSelect.addEventListener('change', (e) => {
             this.filters.month = e.target.value;
             this.render();
         });
-        
+
+        // Exclude users multi-select
+        this.elements.excludeUsersSelect.addEventListener('change', (e) => {
+            const selectedOptions = Array.from(e.target.selectedOptions);
+            this.filters.excludedUsers = selectedOptions.map(option => option.value);
+            this.render();
+        });
+
         // Metric toggle buttons
         this.elements.toggleBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -199,7 +231,8 @@ class App {
         const trendData = this.dataService.getTrendData({
             year: this.filters.year,
             metric: this.filters.metric,
-            topN: 10
+            topN: 10,
+            excludedUsers: this.filters.excludedUsers
         });
         
         // Hide trend chart if specific month selected, or if no data
