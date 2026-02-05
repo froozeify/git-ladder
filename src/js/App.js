@@ -13,7 +13,8 @@ class App {
         this.filters = {
             year: 'all',
             month: 'all',
-            metric: 'pullRequests'
+            metric: 'pullRequests',
+            excludedUsers: ['dependabot[bot]'] // Default excluded users
         };
         
         // DOM elements
@@ -21,6 +22,7 @@ class App {
             lastUpdated: document.getElementById('lastUpdated'),
             yearSelect: document.getElementById('yearSelect'),
             monthSelect: document.getElementById('monthSelect'),
+            excludeUsersSelect: document.getElementById('excludeUsersSelect'),
             toggleBtns: document.querySelectorAll('.toggle-btn'),
             leaderboardChart: document.getElementById('leaderboardChart'),
             trendChart: document.getElementById('trendChart'),
@@ -49,6 +51,7 @@ class App {
             this.updateLastUpdated();
             this.updateOrganizations();
             this.populateYearSelect();
+            this.populateExcludeUsersSelect();
             this.bindEventHandlers();
             
             // Listen for theme changes to update charts
@@ -149,6 +152,26 @@ class App {
     }
 
     /**
+     * Populates the exclude users select dropdown
+     */
+    populateExcludeUsersSelect() {
+        const users = this.dataService.getAllUsers();
+        
+        users.forEach(username => {
+            const option = document.createElement('option');
+            option.value = username;
+            option.textContent = username;
+            
+            // Select default excluded users
+            if (this.filters.excludedUsers.includes(username)) {
+                option.selected = true;
+            }
+            
+            this.elements.excludeUsersSelect.appendChild(option);
+        });
+    }
+
+    /**
      * Binds event handlers to UI elements
      */
     bindEventHandlers() {
@@ -168,6 +191,12 @@ class App {
         // Month select
         this.elements.monthSelect.addEventListener('change', (e) => {
             this.filters.month = e.target.value;
+            this.render();
+        });
+        
+        // Exclude users select
+        this.elements.excludeUsersSelect.addEventListener('change', (e) => {
+            this.filters.excludedUsers = Array.from(e.target.selectedOptions).map(opt => opt.value);
             this.render();
         });
         
@@ -199,7 +228,8 @@ class App {
         const trendData = this.dataService.getTrendData({
             year: this.filters.year,
             metric: this.filters.metric,
-            topN: 10
+            topN: 10,
+            excludedUsers: this.filters.excludedUsers
         });
         
         // Hide trend chart if specific month selected, or if no data
