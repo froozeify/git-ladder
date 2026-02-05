@@ -22,7 +22,7 @@ class App {
             lastUpdated: document.getElementById('lastUpdated'),
             yearSelect: document.getElementById('yearSelect'),
             monthSelect: document.getElementById('monthSelect'),
-            excludeUsersSelect: document.getElementById('excludeUsersSelect'),
+            excludedUsersChips: document.getElementById('excludedUsersChips'),
             toggleBtns: document.querySelectorAll('.toggle-btn'),
             leaderboardChart: document.getElementById('leaderboardChart'),
             trendChart: document.getElementById('trendChart'),
@@ -51,7 +51,6 @@ class App {
             this.updateLastUpdated();
             this.updateOrganizations();
             this.populateYearSelect();
-            this.populateExcludeUsersSelect();
             this.bindEventHandlers();
             
             // Listen for theme changes to update charts
@@ -152,26 +151,6 @@ class App {
     }
 
     /**
-     * Populates the exclude users select dropdown
-     */
-    populateExcludeUsersSelect() {
-        const users = this.dataService.getAllUsers();
-        
-        users.forEach(username => {
-            const option = document.createElement('option');
-            option.value = username;
-            option.textContent = username;
-            
-            // Select default excluded users
-            if (this.filters.excludedUsers.includes(username)) {
-                option.selected = true;
-            }
-            
-            this.elements.excludeUsersSelect.appendChild(option);
-        });
-    }
-
-    /**
      * Binds event handlers to UI elements
      */
     bindEventHandlers() {
@@ -191,12 +170,6 @@ class App {
         // Month select
         this.elements.monthSelect.addEventListener('change', (e) => {
             this.filters.month = e.target.value;
-            this.render();
-        });
-        
-        // Exclude users select
-        this.elements.excludeUsersSelect.addEventListener('change', (e) => {
-            this.filters.excludedUsers = Array.from(e.target.selectedOptions).map(opt => opt.value);
             this.render();
         });
         
@@ -222,7 +195,8 @@ class App {
         this.chartManager.createLeaderboardChart(
             this.elements.leaderboardChart,
             stats,
-            metricLabel
+            metricLabel,
+            (username) => this.handleChartClick(username)
         );
         
         const trendData = this.dataService.getTrendData({
@@ -243,8 +217,63 @@ class App {
         // Update user cards
         this.renderUserCards(stats);
         
+        // Update excluded user chips
+        this.renderExcludedChips();
+        
         // Update KPIs
         this.updateKPIs();
+    }
+
+    /**
+     * Handles click on chart bar to exclude/include user
+     * @param {string} username - Username that was clicked
+     */
+    handleChartClick(username) {
+        const index = this.filters.excludedUsers.indexOf(username);
+        
+        if (index === -1) {
+            // Add to excluded users
+            this.filters.excludedUsers.push(username);
+        } else {
+            // Remove from excluded users
+            this.filters.excludedUsers.splice(index, 1);
+        }
+        
+        // Re-render
+        this.render();
+    }
+
+    /**
+     * Renders excluded user chips
+     */
+    renderExcludedChips() {
+        if (!this.elements.excludedUsersChips) return;
+        
+        if (this.filters.excludedUsers.length === 0) {
+            this.elements.excludedUsersChips.innerHTML = '';
+            return;
+        }
+        
+        this.elements.excludedUsersChips.innerHTML = this.filters.excludedUsers.map(username => `
+            <div class="user-chip">
+                <span>${username}</span>
+                <button class="user-chip-remove" onclick="app.removeExcludedUser('${username}')" aria-label="Remove ${username}">
+                    ×
+                </button>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * Removes a user from the excluded list
+     * @param {string} username - Username to remove from exclusions
+     */
+    removeExcludedUser(username) {
+        const index = this.filters.excludedUsers.indexOf(username);
+        if (index !== -1) {
+            this.filters.excludedUsers.splice(index, 1);
+            this.render();
+        }
     }
 
     /**
@@ -270,6 +299,9 @@ class App {
             
             return `
                 <div class="user-card">
+                    <button class="user-card-exclude" onclick="app.handleChartClick('${user.username}')" aria-label="Exclude ${user.username}" title="Exclude user">
+                        ×
+                    </button>
                     <span class="user-rank ${rankClass}">#${rank}</span>
                     <img class="user-avatar" src="${user.avatar}" alt="${user.username}" loading="lazy">
                     <div class="user-info">
@@ -341,6 +373,6 @@ class App {
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new App();
-    app.init();
+    window.app = new App();
+    window.app.init();
 });

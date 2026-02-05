@@ -347,6 +347,62 @@ body {
     color: var(--color-text-primary);
 }
 
+/* Excluded Users Chips */
+.excluded-users-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    min-height: 32px;
+}
+
+.excluded-users-chips:empty {
+    display: none;
+}
+
+.user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+}
+
+.user-chip:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-accent-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.user-chip-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--color-error);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all var(--transition-fast);
+}
+
+.user-chip-remove:hover {
+    background: var(--color-warning);
+    transform: scale(1.1);
+}
+
 .toggle-group {
     display: flex;
     background: var(--color-bg-tertiary);
@@ -466,6 +522,7 @@ body {
 
 /* User Card */
 .user-card {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -480,6 +537,38 @@ body {
     border-color: var(--color-accent-primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-glow);
+}
+
+.user-card-exclude {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--color-error);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.user-card:hover .user-card-exclude {
+    opacity: 1;
+}
+
+.user-card-exclude:hover {
+    background: var(--color-warning);
+    transform: scale(1.15);
 }
 
 .user-rank {
