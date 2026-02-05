@@ -22,8 +22,6 @@ class App {
             lastUpdated: document.getElementById('lastUpdated'),
             yearSelect: document.getElementById('yearSelect'),
             monthSelect: document.getElementById('monthSelect'),
-            excludeUsersSelect: document.getElementById('excludeUsersSelect'),
-            excludeToggle: document.getElementById('excludeToggle'),
             excludedUsersChips: document.getElementById('excludedUsersChips'),
             toggleBtns: document.querySelectorAll('.toggle-btn'),
             leaderboardChart: document.getElementById('leaderboardChart'),
@@ -53,7 +51,6 @@ class App {
             this.updateLastUpdated();
             this.updateOrganizations();
             this.populateYearSelect();
-            this.populateExcludeUsersSelect();
             this.bindEventHandlers();
             
             // Listen for theme changes to update charts
@@ -154,26 +151,6 @@ class App {
     }
 
     /**
-     * Populates the exclude users select dropdown
-     */
-    populateExcludeUsersSelect() {
-        const users = this.dataService.getAllUsers();
-        
-        users.forEach(username => {
-            const option = document.createElement('option');
-            option.value = username;
-            option.textContent = username;
-            
-            // Select default excluded users
-            if (this.filters.excludedUsers.includes(username)) {
-                option.selected = true;
-            }
-            
-            this.elements.excludeUsersSelect.appendChild(option);
-        });
-    }
-
-    /**
      * Binds event handlers to UI elements
      */
     bindEventHandlers() {
@@ -195,25 +172,6 @@ class App {
             this.filters.month = e.target.value;
             this.render();
         });
-        
-        // Exclude users select
-        this.elements.excludeUsersSelect.addEventListener('change', (e) => {
-            this.filters.excludedUsers = Array.from(e.target.selectedOptions).map(opt => opt.value);
-            this.renderExcludedChips();
-            this.render();
-        });
-        
-        // Toggle exclude users select visibility
-        if (this.elements.excludeToggle) {
-            this.elements.excludeToggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                const select = this.elements.excludeUsersSelect;
-                const icon = this.elements.excludeToggle;
-                
-                select.classList.toggle('collapsed');
-                icon.classList.toggle('expanded');
-            });
-        }
         
         // Metric toggle buttons
         this.elements.toggleBtns.forEach(btn => {
@@ -281,20 +239,8 @@ class App {
             this.filters.excludedUsers.splice(index, 1);
         }
         
-        // Update the multiselect to reflect the change
-        this.updateExcludeUsersSelect();
-        
         // Re-render
         this.render();
-    }
-
-    /**
-     * Updates the exclude users select element
-     */
-    updateExcludeUsersSelect() {
-        Array.from(this.elements.excludeUsersSelect.options).forEach(option => {
-            option.selected = this.filters.excludedUsers.includes(option.value);
-        });
     }
 
     /**
@@ -326,7 +272,6 @@ class App {
         const index = this.filters.excludedUsers.indexOf(username);
         if (index !== -1) {
             this.filters.excludedUsers.splice(index, 1);
-            this.updateExcludeUsersSelect();
             this.render();
         }
     }

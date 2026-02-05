@@ -347,29 +347,6 @@ body {
     color: var(--color-text-primary);
 }
 
-/* Collapsible multiselect */
-.collapsible-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
-}
-
-.toggle-icon {
-    font-size: 0.7rem;
-    transition: transform var(--transition-fast);
-    margin-left: var(--spacing-sm);
-}
-
-.toggle-icon.expanded {
-    transform: rotate(180deg);
-}
-
-.select[multiple].collapsed {
-    display: none;
-}
-
 /* Excluded Users Chips */
 .excluded-users-chips {
     display: flex;
