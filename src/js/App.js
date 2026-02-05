@@ -299,6 +299,9 @@ class App {
             
             return `
                 <div class="user-card">
+                    <button class="user-card-exclude" onclick="app.handleChartClick('${user.username}')" aria-label="Exclude ${user.username}" title="Exclude user">
+                        ×
+                    </button>
                     <span class="user-rank ${rankClass}">#${rank}</span>
                     <img class="user-avatar" src="${user.avatar}" alt="${user.username}" loading="lazy">
                     <div class="user-info">

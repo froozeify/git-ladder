@@ -522,6 +522,7 @@ body {
 
 /* User Card */
 .user-card {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -536,6 +537,38 @@ body {
     border-color: var(--color-accent-primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-glow);
+}
+
+.user-card-exclude {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--color-error);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0;
+    transition: all var(--transition-fast);
+    z-index: 10;
+}
+
+.user-card:hover .user-card-exclude {
+    opacity: 1;
+}
+
+.user-card-exclude:hover {
+    background: var(--color-warning);
+    transform: scale(1.15);
 }
 
 .user-rank {
