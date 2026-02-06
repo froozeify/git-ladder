@@ -1,6 +1,6 @@
 /**
  * ChartManager Class
- * 
+ *
  * Manages Chart.js instances for the leaderboard and trend visualizations.
  * Provides methods to create, update, and destroy charts.
  */
@@ -54,16 +54,16 @@ class ChartManager {
      */
     createLeaderboardChart(canvas, data, metric = 'Commits', onBarClick = null) {
         const ctx = canvas.getContext('2d');
-        
+
         // Destroy existing chart if any
         if (this.leaderboardChart) {
             this.leaderboardChart.destroy();
         }
-        
+
         const topUsers = data.slice(0, 20);
         const chartColors = this.getChartColors();
         const textColors = this.getTextColors();
-        
+
         this.leaderboardChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -105,7 +105,7 @@ class ChartManager {
                         callbacks: {
                             title: (items) => items[0].label,
                             label: (item) => `${metric}: ${item.raw.toLocaleString()}`,
-                            afterLabel: () => 'Click to exclude/include'
+                            afterLabel: () => 'Click to exclude'
                         }
                     }
                 },
@@ -137,7 +137,7 @@ class ChartManager {
                 }
             }
         });
-        
+
         // Make canvas cursor pointer to indicate clickability
         canvas.style.cursor = 'pointer';
     }
@@ -149,12 +149,12 @@ class ChartManager {
      */
     createTrendChart(canvas, trendData) {
         const ctx = canvas.getContext('2d');
-        
+
         // Destroy existing chart if any
         if (this.trendChart) {
             this.trendChart.destroy();
         }
-        
+
         if (!trendData) {
             // Show placeholder message
             this.trendChart = new Chart(ctx, {
@@ -180,10 +180,10 @@ class ChartManager {
             });
             return;
         }
-        
+
         const textColors = this.getTextColors();
-        
-        
+
+
         this.trendChart = new Chart(ctx, {
             type: 'line',
             data: trendData,
@@ -253,16 +253,16 @@ class ChartManager {
      */
     updateLeaderboardChart(data, metric = 'Commits') {
         if (!this.leaderboardChart) return;
-        
+
         const topUsers = data.slice(0, 20);
         const ctx = this.leaderboardChart.ctx;
-        
+
         this.leaderboardChart.data.labels = topUsers.map(u => u.username);
         this.leaderboardChart.data.datasets[0].label = metric;
         this.leaderboardChart.data.datasets[0].data = topUsers.map(u => u.value);
         this.leaderboardChart.data.datasets[0].backgroundColor = topUsers.map((_, i) => this.getGradient(ctx, i));
         this.leaderboardChart.data.datasets[0].borderColor = topUsers.map((_, i) => this.chartColors[i % this.chartColors.length]);
-        
+
         this.leaderboardChart.update('active');
     }
 

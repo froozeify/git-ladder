@@ -372,6 +372,7 @@ body {
     color: var(--color-text-primary);
     font-size: 0.875rem;
     transition: all var(--transition-fast);
+    cursor: pointer;
 }
 
 .user-chip:hover {
