@@ -1,6 +1,6 @@
 /**
  * App Class
- * 
+ *
  * Main application controller that initializes services,
  * binds event handlers, and coordinates UI updates.
  */
@@ -8,7 +8,7 @@ class App {
     constructor() {
         this.dataService = new DataService();
         this.chartManager = new ChartManager();
-        
+
         // Current filter state
         this.filters = {
             year: 'all',
@@ -16,7 +16,7 @@ class App {
             metric: 'pullRequests',
             excludedUsers: ['dependabot[bot]'] // Default excluded users
         };
-        
+
         // DOM elements
         this.elements = {
             lastUpdated: document.getElementById('lastUpdated'),
@@ -43,21 +43,21 @@ class App {
         try {
             // Show loading state
             this.showLoading();
-            
+
             // Load data
             await this.dataService.loadData();
-            
+
             // Update UI
             this.updateLastUpdated();
             this.updateOrganizations();
             this.populateYearSelect();
             this.bindEventHandlers();
-            
+
             // Listen for theme changes to update charts
             window.addEventListener('themechange', () => {
                 this.render();
             });
-            
+
             // Initial render
             this.render();
         } catch (error) {
@@ -102,14 +102,14 @@ class App {
      */
     updateOrganizations() {
         const organizations = this.dataService.getOrganizations();
-        
+
         // Update header badges
         if (this.elements.orgBadges) {
             this.elements.orgBadges.innerHTML = organizations
                 .map(org => this.createOrgLink(org, 'org-badge'))
                 .join('');
         }
-        
+
         // Update footer links
         if (this.elements.footerLinks) {
             this.elements.footerLinks.innerHTML = organizations
@@ -135,14 +135,14 @@ class App {
     populateYearSelect() {
         const years = this.dataService.getAvailableYears();
         const currentYear = new Date().getFullYear().toString();
-        
+
         years.forEach(year => {
             const option = document.createElement('option');
             option.value = year;
             option.textContent = year;
             this.elements.yearSelect.appendChild(option);
         });
-        
+
         // Select current year by default if available
         if (years.includes(currentYear)) {
             this.elements.yearSelect.value = currentYear;
@@ -157,22 +157,22 @@ class App {
         // Year select
         this.elements.yearSelect.addEventListener('change', (e) => {
             this.filters.year = e.target.value;
-            
+
             // If "All time" (all) is selected for year, force month to "All months"
             if (this.filters.year === 'all') {
                 this.filters.month = 'all';
                 this.elements.monthSelect.value = 'all';
             }
-            
+
             this.render();
         });
-        
+
         // Month select
         this.elements.monthSelect.addEventListener('change', (e) => {
             this.filters.month = e.target.value;
             this.render();
         });
-        
+
         // Metric toggle buttons
         this.elements.toggleBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -190,7 +190,7 @@ class App {
     render() {
         const stats = this.dataService.getUserStats(this.filters);
         const metricLabel = this.filters.metric === 'commits' ? 'Commits' : 'Pull Requests';
-        
+
         // Update charts
         this.chartManager.createLeaderboardChart(
             this.elements.leaderboardChart,
@@ -198,14 +198,14 @@ class App {
             metricLabel,
             (username) => this.handleChartClick(username)
         );
-        
+
         const trendData = this.dataService.getTrendData({
             year: this.filters.year,
             metric: this.filters.metric,
             topN: 10,
             excludedUsers: this.filters.excludedUsers
         });
-        
+
         // Hide trend chart if specific month selected, or if no data
         if (this.filters.month !== 'all' || !trendData) {
             this.elements.trendChartSection.style.display = 'none';
@@ -213,13 +213,13 @@ class App {
             this.elements.trendChartSection.style.display = 'block';
             this.chartManager.createTrendChart(this.elements.trendChart, trendData);
         }
-        
+
         // Update user cards
         this.renderUserCards(stats);
-        
+
         // Update excluded user chips
         this.renderExcludedChips();
-        
+
         // Update KPIs
         this.updateKPIs();
     }
@@ -230,7 +230,7 @@ class App {
      */
     handleChartClick(username) {
         const index = this.filters.excludedUsers.indexOf(username);
-        
+
         if (index === -1) {
             // Add to excluded users
             this.filters.excludedUsers.push(username);
@@ -238,7 +238,7 @@ class App {
             // Remove from excluded users
             this.filters.excludedUsers.splice(index, 1);
         }
-        
+
         // Re-render
         this.render();
     }
@@ -248,16 +248,16 @@ class App {
      */
     renderExcludedChips() {
         if (!this.elements.excludedUsersChips) return;
-        
+
         if (this.filters.excludedUsers.length === 0) {
             this.elements.excludedUsersChips.innerHTML = '';
             return;
         }
-        
+
         this.elements.excludedUsersChips.innerHTML = this.filters.excludedUsers.map(username => `
-            <div class="user-chip">
+            <div class="user-chip" onclick="app.removeExcludedUser('${username}')">
                 <span>${username}</span>
-                <button class="user-chip-remove" onclick="app.removeExcludedUser('${username}')" aria-label="Remove ${username}">
+                <button class="user-chip-remove" aria-label="Remove ${username}">
                     ×
                 </button>
             </div>
@@ -289,14 +289,14 @@ class App {
             `;
             return;
         }
-        
+
         this.elements.usersGrid.innerHTML = stats.map((user, index) => {
             const rank = index + 1;
             let rankClass = '';
             if (rank === 1) rankClass = 'gold';
             else if (rank === 2) rankClass = 'silver';
             else if (rank === 3) rankClass = 'bronze';
-            
+
             return `
                 <div class="user-card">
                     <button class="user-card-exclude" onclick="app.handleChartClick('${user.username}')" aria-label="Exclude ${user.username}" title="Exclude user">
@@ -329,13 +329,13 @@ class App {
      */
     updateKPIs() {
         const stats = this.dataService.getAggregatedStats(this.filters);
-        
+
         this.animateValue(this.elements.kpiCommits, parseInt(this.elements.kpiCommits.dataset.value || 0), stats.commits, 1000);
         this.elements.kpiCommits.dataset.value = stats.commits;
-        
+
         this.animateValue(this.elements.kpiPRs, parseInt(this.elements.kpiPRs.dataset.value || 0), stats.pullRequests, 1000);
         this.elements.kpiPRs.dataset.value = stats.pullRequests;
-        
+
         this.animateValue(this.elements.kpiContributors, parseInt(this.elements.kpiContributors.dataset.value || 0), stats.contributors, 1000);
         this.elements.kpiContributors.dataset.value = stats.contributors;
     }
@@ -349,18 +349,18 @@ class App {
      */
     animateValue(obj, start, end, duration) {
         if (!obj) return;
-        
+
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            
+
             // Earings function for smoother animation
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-            
+
             const value = Math.floor(progress * (end - start) + start);
             obj.innerHTML = value.toLocaleString();
-            
+
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             } else {
