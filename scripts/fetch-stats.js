@@ -101,6 +101,13 @@ async function fetchCommits(owner, repo) {
       repo,
       since: since.toISOString(),
       per_page: 100
+    }, (response, done) => {
+      const filtered = response.data.filter(c => new Date(c.commit.author.date) >= since);
+      // If we've gone past our date range, stop paginating
+      if (filtered.length < response.data.length) {
+        done();
+      }
+      return filtered;
     });
     
     return commits;
