@@ -320,7 +320,7 @@ class App {
                                 <span class="stat-value">${user.pullRequests.toLocaleString()}</span> PRs
                             </span>
                             <span class="stat-item">
-                                <span class="stat-value">${user.codeReviews.toLocaleString()}</span> reviews
+                                <span class="stat-value">${user.codeReviews.toLocaleString()}</span> Reviews
                             </span>
                         </div>
                     </div>

@@ -176,7 +176,7 @@ async function fetchReviews(owner, repo, pullRequests) {
       for (const review of prReviews) {
         // Skip self-reviews and reviews without a user
         if (!review.user || review.user.login === pr.user?.login) continue;
-        // Only count submitted reviews (APPROVED, CHANGES_REQUESTED, COMMENTED)
+        // Skip pending reviews that haven't been submitted yet
         if (review.state === 'PENDING') continue;
 
         reviews.push({
