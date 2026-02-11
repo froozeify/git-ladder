@@ -104,7 +104,7 @@ Follow these steps to configure your repository:
 1. Click **New repository variable**
 2. Add:
    - **Name**: `GH_YEARS`
-   - **Value**: Number of years to fetch (default: `3`)
+   - **Value**: Number of years to fetch (default: `5`)
 
 #### 4. (Optional) Private Repositories
 

@@ -51,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           # Organizations to track (comma-separated), configured via repository variable
           GH_ORGS: ${{ vars.GH_ORGS }}
-          # Number of years to fetch (default: 3), configured via repository variable
+          # Number of years to fetch (default: 5), configured via repository variable
           GH_YEARS: ${{ vars.GH_YEARS }}
 
       - name: Save Data Cache

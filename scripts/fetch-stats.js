@@ -46,7 +46,7 @@ if (!token) {
 }
 
 // Years to fetch
-const YEARS_TO_FETCH = parseInt(process.env.GH_YEARS || '3', 10);
+const YEARS_TO_FETCH = parseInt(process.env.GH_YEARS || '5', 10);
 
 if (isNaN(YEARS_TO_FETCH) || YEARS_TO_FETCH < 1) {
     console.error(`${RED}Error: GH_YEARS must be a positive integer.${NC}`);
@@ -70,29 +70,19 @@ const octokit = new Octokit({ auth: token });
  * @returns {Promise<Array>} List of repositories
  */
 async function fetchRepositories(org) {
-  const repos = [];
-  let page = 1;
-  
-  while (true) {
-    try {
-      const { data } = await octokit.repos.listForOrg({
-        org,
-        type: 'all',
-        per_page: 100,
-        page
-      });
-      
-      if (data.length === 0) break;
-      repos.push(...data);
-      page++;
-    } catch (error) {
-      console.error(`Error fetching repos for ${org}:`, error.message);
-      break;
-    }
+  try {
+    const repos = await octokit.paginate(octokit.repos.listForOrg, {
+      org,
+      type: 'all',
+      per_page: 100
+    });
+    
+    console.log(`Found ${repos.length} repositories in ${org}`);
+    return repos;
+  } catch (error) {
+    console.error(`Error fetching repos for ${org}:`, error.message);
+    return [];
   }
-  
-  console.log(`Found ${repos.length} repositories in ${org}`);
-  return repos;
 }
 
 /**
@@ -102,38 +92,25 @@ async function fetchRepositories(org) {
  * @returns {Promise<Array>} List of commits
  */
 async function fetchCommits(owner, repo) {
-  const commits = [];
   const since = new Date();
   since.setFullYear(since.getFullYear() - YEARS_TO_FETCH);
   
-  let page = 1;
-  
-  while (true) {
-    try {
-      const { data } = await octokit.repos.listCommits({
-        owner,
-        repo,
-        since: since.toISOString(),
-        per_page: 100,
-        page
-      });
-      
-      if (data.length === 0) break;
-      commits.push(...data);
-      page++;
-      
-      // Rate limiting protection
-      if (page > 10) break; // Max 1000 commits per repo
-    } catch (error) {
-      // 409 means empty repository
-      if (error.status !== 409) {
-        console.error(`Error fetching commits for ${owner}/${repo}:`, error.message);
-      }
-      break;
+  try {
+    const commits = await octokit.paginate(octokit.repos.listCommits, {
+      owner,
+      repo,
+      since: since.toISOString(),
+      per_page: 100
+    });
+    
+    return commits;
+  } catch (error) {
+    // 409 means empty repository
+    if (error.status !== 409) {
+      console.error(`Error fetching commits for ${owner}/${repo}:`, error.message);
     }
+    return [];
   }
-  
-  return commits;
 }
 
 /**
@@ -143,42 +120,31 @@ async function fetchCommits(owner, repo) {
  * @returns {Promise<Array>} List of pull requests
  */
 async function fetchPullRequests(owner, repo) {
-  const pullRequests = [];
   const since = new Date();
   since.setFullYear(since.getFullYear() - YEARS_TO_FETCH);
   
-  let page = 1;
-  
-  while (true) {
-    try {
-      const { data } = await octokit.pulls.list({
-        owner,
-        repo,
-        state: 'all',
-        sort: 'created',
-        direction: 'desc',
-        per_page: 100,
-        page
-      });
-      
-      if (data.length === 0) break;
-      
-      // Filter by date
-      const filtered = data.filter(pr => new Date(pr.created_at) >= since);
-      pullRequests.push(...filtered);
-      
-      // If we've gone past our date range, stop
-      if (filtered.length < data.length) break;
-      
-      page++;
-      if (page > 10) break; // Max 1000 PRs per repo
-    } catch (error) {
-      console.error(`Error fetching PRs for ${owner}/${repo}:`, error.message);
-      break;
-    }
+  try {
+    const pullRequests = await octokit.paginate(octokit.pulls.list, {
+      owner,
+      repo,
+      state: 'all',
+      sort: 'created',
+      direction: 'desc',
+      per_page: 100
+    }, (response, done) => {
+      const filtered = response.data.filter(pr => new Date(pr.created_at) >= since);
+      // If we've gone past our date range, stop paginating
+      if (filtered.length < response.data.length) {
+        done();
+      }
+      return filtered;
+    });
+    
+    return pullRequests;
+  } catch (error) {
+    console.error(`Error fetching PRs for ${owner}/${repo}:`, error.message);
+    return [];
   }
-  
-  return pullRequests;
 }
 
 /**

@@ -109,7 +109,7 @@ Organizations are configured via the `GH_ORGS` environment variable:
 **For GitHub Actions:**
 1. Go to repository **Settings** > **Secrets and variables** > **Actions** > **Variables**
 2. Create `GH_ORGS` variable with comma-separated organizations
-3. Create `GH_YEARS` variable with number of years (optional, default: 3)
+3. Create `GH_YEARS` variable with number of years (optional, default: 5)
 
 **For Local Development:**
 ```bash
@@ -188,7 +188,7 @@ Commits should follow the [Conventional Commits](https://www.conventionalcommits
 - Data is loaded once on page load
 - Charts are recreated (not updated) for simplicity
 - Consider implementing lazy loading for user avatars if list grows large
-- The fetch script limits to 1000 commits/PRs per repo to avoid timeouts
+- The fetch script uses Octokit's built-in pagination to fetch all commits/PRs per repo
 
 ## Browser Support
 
