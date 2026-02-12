@@ -32,7 +32,6 @@ class App {
             footerLinks: document.getElementById('footerLinks'),
             kpiCommits: document.getElementById('kpiCommits'),
             kpiPRs: document.getElementById('kpiPRs'),
-            kpiReviews: document.getElementById('kpiReviews'),
             kpiContributors: document.getElementById('kpiContributors')
         };
     }
@@ -190,8 +189,7 @@ class App {
      */
     render() {
         const stats = this.dataService.getUserStats(this.filters);
-        const metricLabels = { commits: 'Commits', pullRequests: 'Pull Requests', codeReviews: 'Code Reviews' };
-        const metricLabel = metricLabels[this.filters.metric] || 'Commits';
+        const metricLabel = this.filters.metric === 'commits' ? 'Commits' : 'Pull Requests';
 
         // Update charts
         this.chartManager.createLeaderboardChart(
@@ -319,9 +317,6 @@ class App {
                             <span class="stat-item">
                                 <span class="stat-value">${user.pullRequests.toLocaleString()}</span> PRs
                             </span>
-                            <span class="stat-item">
-                                <span class="stat-value">${user.codeReviews.toLocaleString()}</span> Reviews
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -340,9 +335,6 @@ class App {
 
         this.animateValue(this.elements.kpiPRs, parseInt(this.elements.kpiPRs.dataset.value || 0), stats.pullRequests, 1000);
         this.elements.kpiPRs.dataset.value = stats.pullRequests;
-
-        this.animateValue(this.elements.kpiReviews, parseInt(this.elements.kpiReviews.dataset.value || 0), stats.codeReviews, 1000);
-        this.elements.kpiReviews.dataset.value = stats.codeReviews;
 
         this.animateValue(this.elements.kpiContributors, parseInt(this.elements.kpiContributors.dataset.value || 0), stats.contributors, 1000);
         this.elements.kpiContributors.dataset.value = stats.contributors;

@@ -63,7 +63,6 @@ class DataService {
         Object.values(this.data.users).forEach(user => {
             Object.keys(user.commits || {}).forEach(year => years.add(year));
             Object.keys(user.pullRequests || {}).forEach(year => years.add(year));
-            Object.keys(user.codeReviews || {}).forEach(year => years.add(year));
         });
 
         return Array.from(years).sort().reverse();
@@ -89,10 +88,9 @@ class DataService {
         return stats.reduce((acc, user) => {
             acc.commits += user.commits;
             acc.pullRequests += user.pullRequests;
-            acc.codeReviews += user.codeReviews;
             acc.contributors++;
             return acc;
-        }, { commits: 0, pullRequests: 0, codeReviews: 0, contributors: 0 });
+        }, { commits: 0, pullRequests: 0, contributors: 0 });
     }
 
     /**
@@ -100,7 +98,7 @@ class DataService {
      * @param {Object} options - Filter options
      * @param {string} options.year - Year to filter by ('all' for all years)
      * @param {string} options.month - Month to filter by ('all' for all months)
-     * @param {string} options.metric - Metric type ('commits', 'pullRequests', or 'codeReviews')
+     * @param {string} options.metric - Metric type ('commits' or 'pullRequests')
      * @param {Array<string>} options.excludedUsers - List of usernames to exclude (default: [])
      * @returns {Array<Object>} Sorted array of user statistics
      */
@@ -145,8 +143,7 @@ class DataService {
                     avatar: userData.avatar,
                     value: total,
                     commits: this.getMetricValue(userData, 'commits', year, month),
-                    pullRequests: this.getMetricValue(userData, 'pullRequests', year, month),
-                    codeReviews: this.getMetricValue(userData, 'codeReviews', year, month)
+                    pullRequests: this.getMetricValue(userData, 'pullRequests', year, month)
                 });
             }
         }
