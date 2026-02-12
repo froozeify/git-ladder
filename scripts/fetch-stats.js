@@ -155,12 +155,51 @@ async function fetchPullRequests(owner, repo) {
 }
 
 /**
+ * Fetches code reviews for a list of pull requests with pagination
+ * @param {string} owner - Repository owner
+ * @param {string} repo - Repository name
+ * @param {Array} pullRequests - List of pull requests to fetch reviews for
+ * @returns {Promise<Array>} List of reviews (excluding self-reviews)
+ */
+async function fetchReviews(owner, repo, pullRequests) {
+  const reviews = [];
+
+  for (const pr of pullRequests) {
+    try {
+      const prReviews = await octokit.paginate(octokit.pulls.listReviews, {
+        owner,
+        repo,
+        pull_number: pr.number,
+        per_page: 100
+      });
+
+      for (const review of prReviews) {
+        // Skip self-reviews and reviews without a user
+        if (!review.user || review.user.login === pr.user?.login) continue;
+        // Skip pending reviews that haven't been submitted yet
+        if (review.state === 'PENDING') continue;
+
+        reviews.push({
+          user: review.user,
+          submitted_at: review.submitted_at
+        });
+      }
+    } catch (error) {
+      console.error(`Error fetching reviews for ${owner}/${repo}#${pr.number}:`, error.message);
+    }
+  }
+
+  return reviews;
+}
+
+/**
  * Aggregates statistics by user
  * @param {Map} users - Map of user statistics
  * @param {Array} commits - List of commits
  * @param {Array} pullRequests - List of pull requests
+ * @param {Array} codeReviews - List of code reviews
  */
-function aggregateStats(users, commits, pullRequests) {
+function aggregateStats(users, commits, pullRequests, codeReviews) {
   // Process commits
   for (const commit of commits) {
     if (!commit.author) continue;
@@ -175,7 +214,8 @@ function aggregateStats(users, commits, pullRequests) {
       users.set(login, {
         avatar,
         commits: {},
-        pullRequests: {}
+        pullRequests: {},
+        codeReviews: {}
       });
     }
     
@@ -207,7 +247,8 @@ function aggregateStats(users, commits, pullRequests) {
       users.set(login, {
         avatar,
         commits: {},
-        pullRequests: {}
+        pullRequests: {},
+        codeReviews: {}
       });
     }
     
@@ -223,6 +264,44 @@ function aggregateStats(users, commits, pullRequests) {
     
     user.pullRequests[year].total++;
     user.pullRequests[year].months[month]++;
+  }
+
+  // Process code reviews
+  for (const review of codeReviews) {
+    if (!review.user) continue;
+
+    const login = review.user.login;
+    const avatar = review.user.avatar_url;
+    const date = new Date(review.submitted_at);
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+
+    if (!users.has(login)) {
+      users.set(login, {
+        avatar,
+        commits: {},
+        pullRequests: {},
+        codeReviews: {}
+      });
+    }
+
+    const user = users.get(login);
+
+    // Ensure codeReviews object exists (for users created by commits/PRs processing)
+    if (!user.codeReviews) {
+      user.codeReviews = {};
+    }
+
+    // Initialize year if needed
+    if (!user.codeReviews[year]) {
+      user.codeReviews[year] = { total: 0, months: {} };
+    }
+    if (!user.codeReviews[year].months[month]) {
+      user.codeReviews[year].months[month] = 0;
+    }
+
+    user.codeReviews[year].total++;
+    user.codeReviews[year].months[month]++;
   }
 }
 
@@ -250,10 +329,12 @@ async function main() {
         fetchCommits(org, repo.name),
         fetchPullRequests(org, repo.name)
       ]);
+
+      const codeReviews = await fetchReviews(org, repo.name, pullRequests);
       
-      console.log(`    Found ${commits.length} commits, ${pullRequests.length} PRs`);
+      console.log(`    Found ${commits.length} commits, ${pullRequests.length} PRs, ${codeReviews.length} reviews`);
       
-      aggregateStats(users, commits, pullRequests);
+      aggregateStats(users, commits, pullRequests, codeReviews);
     }
   }
   
