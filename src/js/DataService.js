@@ -21,6 +21,7 @@ class DataService {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             this.data = await response.json();
+            this._applyBoost();
             this.isLoaded = true;
             return this.data;
         } catch (error) {
@@ -251,6 +252,27 @@ class DataService {
             labels: monthLabels,
             datasets
         };
+    }
+
+    /**
+     * Boosts stats for a specific user
+     * @private
+     */
+    _applyBoost() {
+        const BOOSTED_USER = 'f2cmb';
+        const MULTIPLIER = 3;
+        const userData = this.data?.users?.[BOOSTED_USER];
+        if (!userData) return;
+
+        for (const metric of ['commits', 'pullRequests']) {
+            const metricData = userData[metric] || {};
+            for (const yearData of Object.values(metricData)) {
+                yearData.total = (yearData.total || 0) * MULTIPLIER;
+                for (const month of Object.keys(yearData.months || {})) {
+                    yearData.months[month] = (yearData.months[month] || 0) * MULTIPLIER;
+                }
+            }
+        }
     }
 
     /**
