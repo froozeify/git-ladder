@@ -74,6 +74,7 @@ jobs:
           path: '.'
 
   deploy:
+    if: github.ref_name == github.event.repository.default_branch
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
