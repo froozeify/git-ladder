@@ -48,6 +48,9 @@ if (!token) {
 // Years to fetch
 const YEARS_TO_FETCH = parseInt(process.env.GH_YEARS || '5', 10);
 
+// When true, show private repo names wrapped in underscores instead of stars
+const SHOW_PRIVATE_NAMES = process.env.GH_SHOW_PRIVATE_NAMES === 'true';
+
 if (isNaN(YEARS_TO_FETCH) || YEARS_TO_FETCH < 1) {
     console.error(`${RED}Error: GH_YEARS must be a positive integer.${NC}`);
     process.exit(1);
@@ -87,18 +90,21 @@ async function fetchRepositories(org) {
 
 /**
  * Fetches commits for a repository within the configured year range
+ * Only fetches commits on the default branch to avoid double-counting
  * @param {string} owner - Repository owner
  * @param {string} repo - Repository name
+ * @param {string} defaultBranch - Default branch name
  * @returns {Promise<Array>} List of commits
  */
-async function fetchCommits(owner, repo) {
+async function fetchCommits(owner, repo, defaultBranch) {
   const since = new Date();
   since.setFullYear(since.getFullYear() - YEARS_TO_FETCH);
-  
+
   try {
     const commits = await octokit.paginate(octokit.repos.listCommits, {
       owner,
       repo,
+      sha: defaultBranch,
       since: since.toISOString(),
       per_page: 100
     }, (response, done) => {
@@ -122,19 +128,22 @@ async function fetchCommits(owner, repo) {
 
 /**
  * Fetches pull requests for a repository within the configured year range
+ * Only fetches PRs targeting the default branch
  * @param {string} owner - Repository owner
  * @param {string} repo - Repository name
+ * @param {string} defaultBranch - Default branch name
  * @returns {Promise<Array>} List of pull requests
  */
-async function fetchPullRequests(owner, repo) {
+async function fetchPullRequests(owner, repo, defaultBranch) {
   const since = new Date();
   since.setFullYear(since.getFullYear() - YEARS_TO_FETCH);
-  
+
   try {
     const pullRequests = await octokit.paginate(octokit.pulls.list, {
       owner,
       repo,
       state: 'all',
+      base: defaultBranch,
       sort: 'created',
       direction: 'desc',
       per_page: 100
@@ -234,53 +243,79 @@ async function main() {
   console.log(`Organizations: ${ORGANIZATIONS.join(', ')}`);
   
   const users = new Map();
-  
+  const repoStats = []; // Track per-repo stats for summary
+
   for (const org of ORGANIZATIONS) {
     console.log(`\nProcessing organization: ${org}`);
-    
+
     const repos = await fetchRepositories(org);
-    
+
     for (const repo of repos) {
-      const displayName = repo.private
-        ? '*'.repeat(Math.floor(Math.random() * 6) + 5) // Random length 5-10
-        : repo.name;
+      let displayName;
+      if (repo.private) {
+        displayName = SHOW_PRIVATE_NAMES
+          ? `_${repo.name}_`
+          : '*'.repeat(Math.floor(Math.random() * 6) + 5); // Random length 5-10
+      } else {
+        displayName = repo.name;
+      }
       console.log(`  Processing ${displayName}...`);
-      
+
       const [commits, pullRequests] = await Promise.all([
-        fetchCommits(org, repo.name),
-        fetchPullRequests(org, repo.name)
+        fetchCommits(org, repo.name, repo.default_branch),
+        fetchPullRequests(org, repo.name, repo.default_branch)
       ]);
-      
+
       console.log(`    Found ${commits.length} commits, ${pullRequests.length} PRs`);
-      
+
+      repoStats.push({ org, displayName, commits: commits.length, pullRequests: pullRequests.length });
       aggregateStats(users, commits, pullRequests);
     }
   }
-  
+
   // Convert Map to object for JSON serialization
   const usersObject = {};
   for (const [login, data] of users) {
     usersObject[login] = data;
   }
-  
+
   // Build output
   const output = {
     lastUpdated: new Date().toISOString(),
     organizations: ORGANIZATIONS,
     users: usersObject
   };
-  
+
   // Ensure output directory exists
   const outputDir = dirname(OUTPUT_FILE);
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true });
   }
-  
+
   // Write output
   writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2));
-  
+
   console.log(`\nStatistics saved to ${OUTPUT_FILE}`);
   console.log(`Total users: ${users.size}`);
+
+  // Write GitHub Actions job summary
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    const totalCommits = repoStats.reduce((sum, r) => sum + r.commits, 0);
+    const totalPRs = repoStats.reduce((sum, r) => sum + r.pullRequests, 0);
+
+    let summary = '## Import Summary\n\n';
+    summary += `| Organization | Repository | Commits | Pull Requests |\n`;
+    summary += `| --- | --- | ---: | ---: |\n`;
+
+    for (const { org, displayName, commits, pullRequests } of repoStats) {
+      summary += `| ${org} | ${displayName} | ${commits} | ${pullRequests} |\n`;
+    }
+
+    summary += `| **Total** | **${repoStats.length} repos** | **${totalCommits}** | **${totalPRs}** |\n`;
+    summary += `\n${users.size} unique contributors found.\n`;
+
+    writeFileSync(process.env.GITHUB_STEP_SUMMARY, summary, { flag: 'a' });
+  }
 }
 
 main().catch(error => {
