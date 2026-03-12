@@ -90,10 +90,9 @@ async function fetchRepositories(org) {
 
 /**
  * Fetches commits for a repository within the configured year range
- * Only fetches commits on the default branch to avoid double-counting
  * @param {string} owner - Repository owner
  * @param {string} repo - Repository name
- * @param {string} defaultBranch - Default branch name
+ * @param {string} defaultBranch - Default branch name (unused, otherwise metrics will include the original PR commits count)
  * @returns {Promise<Array>} List of commits
  */
 async function fetchCommits(owner, repo, defaultBranch) {
@@ -104,7 +103,6 @@ async function fetchCommits(owner, repo, defaultBranch) {
     const commits = await octokit.paginate(octokit.repos.listCommits, {
       owner,
       repo,
-      sha: defaultBranch,
       since: since.toISOString(),
       per_page: 100
     }, (response, done) => {
