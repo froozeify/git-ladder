@@ -12,10 +12,11 @@
     "statistics",
     "contributions"
   ],
+  "packageManager": "pnpm@10.13.1",
   "scripts": {
     "build": "mkdir -p vendor && cp node_modules/chart.js/dist/chart.umd.js vendor/chart.js",
     "fetch-data": "node scripts/fetch-stats.js",
-    "serve": "npm run build && npx serve ."
+    "serve": "pnpm run build && pnpm dlx serve ."
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1",
