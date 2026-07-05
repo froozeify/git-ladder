@@ -16,6 +16,10 @@ permissions:
   pages: write
   id-token: write
 
+# Avoid concurrent Pages deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
