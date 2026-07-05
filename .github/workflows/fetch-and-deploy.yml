@@ -24,14 +24,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '24'
-          cache: 'npm'
+          node-version: '26'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Restore Cached Data
         id: cache-restore
@@ -44,7 +47,7 @@ jobs:
 
       - name: Fetch GitHub statistics
         if: github.event_name != 'push' || hashFiles('data/stats.json') == ''
-        run: npm run fetch-data
+        run: pnpm run fetch-data
         env:
           # Uses default GITHUB_TOKEN for public repos
           # For private repos, use a PAT stored as GH_PAT secret
@@ -62,7 +65,7 @@ jobs:
           key: stats-data-${{ github.run_id }}
 
       - name: Build vendor assets
-        run: npm run build
+        run: pnpm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
