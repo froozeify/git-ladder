@@ -42,7 +42,7 @@ jobs:
 
       - name: Restore Cached Data
         id: cache-restore
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: data/stats.json
           key: stats-data-${{ github.run_id }}
@@ -63,7 +63,7 @@ jobs:
 
       - name: Save Data Cache
         if: github.event_name != 'push' || hashFiles('data/stats.json') == ''
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: data/stats.json
           key: stats-data-${{ github.run_id }}
